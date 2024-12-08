@@ -1,4 +1,9 @@
-#The parameters are going to be from the logic app. In the logic app we can specify the user and the manager
+<#
+.Description
+This PowerShell script should be put into an Azure Automation Account runbook and can be triggered using logic apps or other HTTP requests. In our solution, we trigger this runbook using an Azure Logic App.
+#>
+
+#The parameters are going to be from the logic app. In the logic app, we can specify the user and the manager
 param (
     [Parameter (Mandatory = $true)] 
     [String]$Username,
@@ -9,20 +14,21 @@ $CustomerDefaultDomainname = "examplecompany.onmicrosoft.com" #Put your organisa
 
 Write-Output $Username
 
-#Connecting to Exchange Online, permissions for this are documented
+#Connecting to Exchange Online, you will need specific permissions for this, they are documented in the ReadMe
 Write-Output "Connecting to Exchange Online"
 Connect-ExchangeOnline -ManagedIdentity -Organization examplecompany.com 
 
 $Mailbox = Get-Mailbox | Where {$_.PrimarySmtpAddress -eq $Username} #Get the offboarding employee's mailbox
 
-#Write your own default out-of-office auto-reply. 
+#Write your own default out-of-office auto-reply when someone emails the employee that has been terminated. 
 $OutOfOfficeBody = @"
 Hello,
 
 Thank you for your email. I am no longer with ExampleCompany. Please direct all future inquiries to $Manager. 
-He/she will be happy to assist you. Just so you know, your email will not be forwarded automatically.
+He/she will be happy to assist you. Your email will not be forwarded automatically.
 
 Thanks!
+ExampleCompany
 "@
 
 #Connecting to Microsoft Graph
@@ -30,7 +36,7 @@ Connect-MgGraph -Identity
 Write-Output "Connected to Microsoft Graph"
 $User = Get-MgUser -UserId $Username
 
-#Set Sign in Blocked
+#Set Sign in Blocked; there are some comments that this command does not seem to work all the time; please test this thoroughly! GA permission is recommended for the runbook to disable privileged users.
 Write-Output "Block Sign In"
 Update-MgUser -UserId $User.Id -AccountEnabled $false 
 
@@ -39,7 +45,7 @@ Write-Output "Revoke Sessions"
 Revoke-MgUserSignInSession -UserId $User.Id
 
 #Remove Calendar Events
-Remove-CalendarEvents -Identity $Username -CancelOrganizedMeetings -QueryWindowInDays 1000
+Remove-CalendarEvents -Identity $Username -CancelOrganizedMeetings -QueryWindowInDays 1825
 Write-Output "Cancelled Calendar Events"
 
 #Set Out Of Office
