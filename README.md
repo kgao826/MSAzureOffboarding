@@ -11,6 +11,12 @@ The general layout of the process based on the diagram above is as follows:
 - Create an Azure Logic App to look for changes from the SharePoint form.
 - Create the PowerShell script in an Azure Automation Account Runbook so it called by the Logic App.
 - Create a KeyVault to store API keys to connect with other services such as Atlassian Jira, JetBrains and other offboarding API requests.
+- Create other Azure Logic Apps to be called by the primary Logic App. These Logic Apps can be for other services and can use API keys from the KeyVault.
+
+As long as API methods are offered by other third party services, the offboarding processes such as license removals can be done by additional Logic Apps.
+The basic flow of the entire process is shown below:
+
+![alt text](https://github.com/kgao826/MSAzureOnboardingOffboarding/blob/main/Github%20Azure%20Diagrams%202.png)
 
 ## SharePoint Form
 Work in progress...updated soon!
