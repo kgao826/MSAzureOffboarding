@@ -1,6 +1,13 @@
 # MS EntraID Onboarding & Offboarding (WIP!!)
 _Automated Onboarding and Offboarding for Users in Entra ID._
 
+## Table of Contents:
+1. Overview
+2. SharePoint Form
+3. Logic Apps
+4. Automation Runbook
+
+## 1. Overview
 This project focuses on employee onboarding and offboarding in an organisation that uses Microsoft Entra ID and Azure services. The main feature of this project is combining an HR SharePoint form with Azure Logic Apps and Azure Automation Runbooks to onboard or offboard users on a specific date and time, as created in the HR SharePoint form. I am constantly improving the number of automated scripts in the Runbook, allowing more features. All Powershell commands use the Microsoft Graph modules and no longer use depreciated MSOnline/AZ modules. It is recommended that the Managed Identity for the offboarding has a GA role so it can disable Privileged users. GA (Global Administrator) users should be removed from the GA role prior to offboarding.
 
 The automation will perform the following actions on a leaving employee:
@@ -33,17 +40,19 @@ The basic flow of the entire process is shown below:
 
 ![alt text](https://github.com/kgao826/MSAzureOnboardingOffboarding/blob/main/Offboarding%20High%20Level%20Flow%20Diagram.png)
 
-## SharePoint Form
+## 2. SharePoint Form
 Work in progress...updated soon!
 
-## Logic Apps
+## 3. Logic Apps
 
-## Automation Runbook
+## 4. Automation Runbook
+### Create the Automation Account
 Create an Automation Runbook to run PowerShell scripts in Azure. This allows the logic app to call the script on demand quickly. 
 1. Go to Azure > Create an Automation Account
 2. Put it in the right resource group and the same region as all other resources.
 3. Ensure it is set to System Assigned Identity, and you can put everything else to default.
 
+### Create Runbook
 Create a new Runbook with an appropriate name with the PowerShell script offboarding.ps1, modify the script as you wish, but test it to suit your organisation. We will deal with the permissions later.
 
 |  | Value |
@@ -59,6 +68,37 @@ Change to the following:
 
 Publish the Runbook
 
+### Import Modules
+On the left pane, go to **Shared Resources** > **Modules**
+
+**Add a Module** > **Browse from gallery** > Search and select the module > Version 7.2
+
+You will need to import the following modules to run the PowerShell script:
+- ExchangeOnlineManagement
+- Microsoft.Graph.Authentication
+- Microsoft.Graph.Groups
+- Microsoft.Graph.Users
+- Microsoft.Graph.Users.Actions
+- Microsoft.Graph.Mail
+- PackageManagement
+- PowerShellGet
+
+### Managed Identity Permissions
 Note that we need to sort out the permissions for 
 - Connect-ExchangeOnline -ManagedIdentity
 - Connect-MgGraph -Identity
+
+To give the right access for the runbook to perform actions you need to give it several permissions. You can assign GA or you can assign more granular permissions such as the following:
+
+| Role | Env (App ID) | ID |
+| ------------- | ------------- | ------------- |
+| User Administrator  | Azure RBAC  | |
+| Priviledged User Administrator  | Azure RBAC  | |
+| Directory Reader | Azure RBAC | |
+| Priviledge Authentication Administrator | Azure RBAC | |
+| Exchange.ManageAsApp | | |
+| Exchange Administrator | Azure RBAC | |
+| Exchange.ManageAsApp | | |
+
+### Monitor
+Create a log search alert rule to monitor the automation account in case of any failures and send an email to your IT team.
