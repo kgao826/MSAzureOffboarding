@@ -39,3 +39,26 @@ Work in progress...updated soon!
 ## Logic Apps
 
 ## Automation Runbook
+Create an Automation Runbook to run PowerShell scripts in Azure. This allows the logic app to call the script on demand quickly. 
+1. Go to Azure > Create an Automation Account
+2. Put it in the right resource group and the same region as all other resources.
+3. Ensure it is set to System Assigned Identity, and you can put everything else to default.
+
+Create a new Runbook with an appropriate name with the PowerShell script offboarding.ps1, modify the script as you wish, but test it to suit your organisation. We will deal with the permissions later.
+
+|  | Value |
+| ------------- | ------------- |
+| Runbook Type  | PowerShell  |
+| Runtime Version  | 7.2  |
+
+Since version 7.1 is being depreciated, make sure to use 7.2.
+Change to the following:
+- Line 13: $CustomerDefaultDomainname = "examplecompany.onmicrosoft.com"
+- Line 19: Connect-ExchangeOnline -ManagedIdentity -Organization examplecompany.com
+- Lines 24-32: $OutOfOfficeBody
+
+Publish the Runbook
+
+Note that we need to sort out the permissions for 
+- Connect-ExchangeOnline -ManagedIdentity
+- Connect-MgGraph -Identity
