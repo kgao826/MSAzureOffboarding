@@ -1,4 +1,4 @@
-# MS EntraID Onboarding & Offboarding (WIP!!)
+# MS EntraID Offboarding (WIP!!)
 _Automated Onboarding and Offboarding for Users in Entra ID._
 
 ## Table of Contents:
