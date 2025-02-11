@@ -61,10 +61,11 @@ Create a new Runbook with an appropriate name with the PowerShell script offboar
 | Runtime Version  | 7.2  |
 
 Since version 7.1 is being depreciated, make sure to use 7.2.
-Change to the following:
-- Line 13: $CustomerDefaultDomainname = "examplecompany.onmicrosoft.com"
-- Line 19: Connect-ExchangeOnline -ManagedIdentity -Organization examplecompany.com
-- Lines 24-32: $OutOfOfficeBody
+
+Change to the following placeholder and the out of office message:
+- Line 13: ```$CustomerDefaultDomainname = "examplecompany.onmicrosoft.com"```
+- Line 19: ```Connect-ExchangeOnline -ManagedIdentity -Organization examplecompany.com```
+- Lines 24-32: ```$OutOfOfficeBody```
 
 Publish the Runbook
 
@@ -85,8 +86,8 @@ You will need to import the following modules to run the PowerShell script:
 
 ### Managed Identity Permissions
 Note that we need to sort out the permissions for 
-- Connect-ExchangeOnline -ManagedIdentity
-- Connect-MgGraph -Identity
+- ```Connect-ExchangeOnline -ManagedIdentity```
+- ```Connect-MgGraph -Identity```
 
 To give the right access for the runbook to perform actions you need to give it several permissions. You can assign GA or you can assign more granular permissions such as the following:
 
