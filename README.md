@@ -90,7 +90,7 @@ Note that we need to sort out the permissions for
 
 To give the right access for the runbook to perform actions you need to give it several permissions. You can assign GA or you can assign more granular permissions such as the following:
 
-| Role | Env (App ID) | ID |
+| Role | Env (App ID) | Role ID |
 | ------------- | ------------- | ------------- |
 | User Administrator  | Azure RBAC  | |
 | Priviledged User Administrator  | Azure RBAC  | |
@@ -99,6 +99,12 @@ To give the right access for the runbook to perform actions you need to give it 
 | Exchange.ManageAsApp | | |
 | Exchange Administrator | Azure RBAC | |
 | Exchange.ManageAsApp | | |
+
+For Azure RBAC roles, you simply assign the role in Entra ID. For the other permissions, you need to use PowerShell.
+
+First, double-check that the App ID and Role ID are still correct in [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer).
+
+You can check successful permissions assignments in the Roles and Administrators section of the Entreprise App.
 
 ### Monitor
 Create a log search alert rule to monitor the automation account in case of any failures and send an email to your IT team.
