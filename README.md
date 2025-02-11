@@ -1,5 +1,5 @@
 # MS EntraID Offboarding (WIP!!)
-_Automated Onboarding and Offboarding for Users in Entra ID._
+_Automated Offboarding for Users in Entra ID using a SharePoint form._
 
 ## Table of Contents:
 1. Overview
