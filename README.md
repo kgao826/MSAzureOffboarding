@@ -93,15 +93,46 @@ To give the right access for the runbook to perform actions you need to give it 
 
 | Role | Env (App ID) | Role ID |
 | ------------- | ------------- | ------------- |
-| User Administrator  | Azure RBAC  | |
-| Priviledged User Administrator  | Azure RBAC  | |
-| Directory Reader | Azure RBAC | |
-| Priviledge Authentication Administrator | Azure RBAC | |
-| Exchange.ManageAsApp | | |
-| Exchange Administrator | Azure RBAC | |
-| Exchange.ManageAsApp | | |
+| User Administrator | RBAC |  |
+| Privileged User Administrator | RBAC |  |
+| Directory Reader | RBAC |  |
+| Privileged Authentication Administrator| RBAC |  |
+| Exchange.ManageAsApp | Exchange (00000002-0000-0ff1-ce00-000000000000)| dc50a0fb-09a3-484d-be87-e023b12c6440 |
+| Exchange Administrator | RBAC |  |
+| Directory.Read.All | MS Graph (00000003-0000-0000-c000-000000000000) | 7ab1d382-f21e-4acd-a863-ba3e13f7da61 |
 
 For Azure RBAC roles, you simply assign the role in Entra ID. For the other permissions, you need to use PowerShell.
+# Logic App System Managed Identity
+## PowerShell Script to Assign Permissions to System Managed Identity
+To find the Role ID of the permission go [here](https://developer.microsoft.com/en-us/graph/graph-explorer)
+
+Run the following request and search for the role name (GET):
+```
+https://graph.microsoft.com/v1.0/servicePrincipals(appId='00000003-0000-0000-c000-000000000000')?$select=id,appId,displayName,appRoles,oauth2PermissionScopes,resourceSpecificApplicationPermissions
+```
+
+Then use the following script in any PowerShell terminal (e.g. PowerShell ISE or CloudShell):
+```
+Connect-MgGraph -TenantId <TENANT ID> -Scopes AppRoleAssignment.ReadWrite.All,Application.Read.All
+$MI_ID = "<APP ID>"
+$AppRoleID = "<ROLE ID>"
+$ResourceID = (Get-MgServicePrincipal -Filter "AppId eq '00000003-0000-0000-c000-000000000000'").Id
+New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $MI_ID -PrincipalId $MI_ID -AppRoleId $AppRoleID -ResourceId $ResourceID
+```
+
+If module not recognised
+```
+Install-Module Microsoft.Graph -Scope AllUsers  
+```
+**EXAMPLE** for logic-aue-LifecycleWorkflowToAA-offboarding
+
+```
+Connect-MgGraph -TenantId <TENANT ID> -Scopes AppRoleAssignment.ReadWrite.All,Application.Read.All
+$MI_ID = "b116ef4a-bbcc-4e59-9850-65548573d912"
+$AppRoleID = "c529cfca-c91b-489c-af2b-d92990b66ce6"
+$ResourceID = (Get-MgServicePrincipal -Filter "AppId eq '00000003-0000-0000-c000-000000000000'").Id
+New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $MI_ID -PrincipalId $MI_ID -AppRoleId $AppRoleID -ResourceId $ResourceID
+```
 
 First, double-check that the App ID and Role ID are still correct in [Graph Explorer](https://developer.microsoft.com/en-us/graph/graph-explorer).
 
